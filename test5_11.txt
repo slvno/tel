@@ -1,0 +1,1 @@
+http://127.0.0.1:7777/validatePhoneNumber?phone_number=++7-9+8+20000000&phone_number=++e7-9+8+20000000
