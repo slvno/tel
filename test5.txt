@@ -1,0 +1,18 @@
+http://127.0.0.1:7777/fakePath?phone_number=89820000000	404	
+http://127.0.0.1:7777/validatePhoneNumber?fake_parameter=89820000000	400	
+http://127.0.0.1:7777/validatePhoneNumber?phone_number=80000000000	200	{"status": false}
+http://127.0.0.1:7777/validatePhoneNumber?phone_number=89820000000	200	{
+  "normalized": "+7-982-000-0000",
+  "status": true
+}
+http://127.0.0.1:7777/validatePhoneNumber?phone_number=%2B7+%28982%29+123-1234	200	{
+  "normalized": "+7-982-123-1234",
+  "status": true
+}
+
+http://127.0.0.1:7777/validatePhoneNumber?phone_number=898100000000
+http://127.0.0.1:7777/validatePhoneNumber?phone_number=8982
+http://127.0.0.1:7777/validatePhoneNumber?phone_number=89820000000
+http://127.0.0.1:7777/validatePhoneNumber?phone_number=++7-9+8+20000000&phone_number=++e7-9+8+20000000
+
+http://127.0.0.1:7777/
