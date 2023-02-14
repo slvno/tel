@@ -121,6 +121,21 @@ count=$(printf "%s\n" $all_word | wc -l)
 test_program="test_get_url.py"
 echo -e "Testing program $test_program\n"
 
+touch error_tests.log
+echo -n > error_tests.log
+touch ok_tests.log
+echo -n  > ok_tests.log
+touch skip_tests.log
+echo -n  > skip_tests.log
+
+error_tests_count=
+((error_tests_count=0))
+ok_tests_count=
+((ok_tests_count=0))
+skip_tests_count=
+((skip_tests_count=0))
+
+
 for s in "${all_word[@]}"; do
 
     ((i+=1))
@@ -130,7 +145,8 @@ for s in "${all_word[@]}"; do
 	if [[ ${s:2} =~ .*[\\/].* ]] ; then
 	    # echo "Found \ or / in ${s:2} file"
 		echo "$i: Skip test file $s"
-	
+	  echo "$s" >> skip_tests.log
+    ((skip_tests_count++))
 	else
 	    # echo "Not found \ or / in ${s:2} file"
 				
@@ -167,14 +183,18 @@ for s in "${all_word[@]}"; do
 			if [ -f $file_result_expected ] ; then
     			result_expected=$(cat "${file_result_expected}")
 
-	    		[ "$result" = "$result_expected" ] && (echo "$i: Run test file $s, resuit is $result - $(if ((ds >= 2)); then echo ' BAD time'; else echo ' OK'; fi)"; )  
-		    	( ! [ "$result" = "$result_expected" ] ) && (echo "$i: Run test file $s, resuit='${result}' expected result is '$result_expected' - BAD result";)
+	    		[ "$result" = "$result_expected" ] && (echo "$i: Run test file $s, resuit is $result - $(if ((ds >= 2)); then echo ' BAD time'; echo "$s" >> error_tests.log;else echo ' OK'; echo "$s" >> ok_tests.log; fi)"; )
+
+		    	( ! [ "$result" = "$result_expected" ] ) && (echo "$i: Run test file $s, resuit='${result}' expected result is '$result_expected' - BAD result"; echo "$s" >> error_tests.log;)
 		# elif [ $? -eq 0 ]; then
 		#else
             #echo "$i: Skip test file $s"
 	    #fi
 		    else
-			    echo "$i: Run test file $s, resuit is $result - $(if ((ds >= 2)); then echo ' BAD time'; else echo ' OK'; fi)"
+
+			    echo "$i: Run test file $s, resuit is $result - $(if ((ds >= 2)); then echo ' BAD time'; echo "$s" >> error_tests.log; else echo ' OK'; echo "$s" >> ok_tests.log; fi)"
+
+
 				echo "Expected result not found, create file ${file_result_expected} with expected result"
 				echo "$result" > ${file_result_expected}
 		    fi
@@ -186,6 +206,13 @@ for s in "${all_word[@]}"; do
 	fi
 	echo "" 
 done
+
+
+printf "Skip %s tests:\n%s\n\n" "${skip_tests_count}" "$(cat skip_tests.log)"
+printf "Ok %s tests:\n%s\n\n" "$(cat ok_tests.log|wc -l)" "$(cat ok_tests.log)"
+printf "Error %s tests:\n%s\n\n" "$(cat error_tests.log|wc -l)" "$(cat error_tests.log)"
+
+if (( (($(cat error_tests.log|wc -l)))==0)) ; then echo "All tests - OK!"; else echo "Found errors :("; fi
 
 DEBUG set +x
 DEBUG set +v
