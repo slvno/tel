@@ -212,7 +212,7 @@ printf "Skip %s tests:\n%s\n\n" "${skip_tests_count}" "$(cat skip_tests.log)"
 printf "Ok %s tests:\n%s\n\n" "$(cat ok_tests.log|wc -l)" "$(cat ok_tests.log)"
 printf "Error %s tests:\n%s\n\n" "$(cat error_tests.log|wc -l)" "$(cat error_tests.log)"
 
-if (( (($(cat error_tests.log|wc -l)))==0)) ; then echo "All tests - OK!"; else echo "Found errors :("; fi
+if (( (($(cat error_tests.log|wc -l)))==0  && (($(cat ok_tests.log|wc -l)))+(($(cat skip_tests.log|wc -l)))== i )) ; then echo "All tests - OK!"; else echo "Found errors :("; fi
 
 DEBUG set +x
 DEBUG set +v
